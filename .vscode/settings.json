@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "*.htm": "html",
+    "*.css": "css"
+  },
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "css.validate": true,
+  "css.lint.unknownAtRules": "ignore",
+  "emmet.includeLanguages": {
+    "html": "html",
+    "htm": "html",
+    "css": "css"
+  },
+  "editor.suggest.showWords": true
+}
