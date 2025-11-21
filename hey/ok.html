@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Lesson 6 - Advanced</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #020617;
+        color: #e5e7eb;
+        min-height: 200vh;
+        padding: 2rem;
+      }
+      section {
+        margin: 4rem 0;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: #0f172a;
+      }
+      h2 {
+        margin-bottom: 1rem;
+        color: #38bdf8;
+      }
+      .type-target {
+        font-size: 1.8rem;
+        min-height: 2.5rem;
+      }
+      .counter {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #22c55e;
+      }
+      .motion-wrapper {
+        position: relative;
+        height: 250px;
+        background: #020617;
+        border-radius: 1rem;
+        overflow: hidden;
+        margin-top: 1.5rem;
+      }
+      .bee {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #facc15 0%,
+          #eab308 40%,
+          #b45309 100%
+        );
+        position: absolute;
+        transform: translate(-20px, -20px); /* center on path point */
+        box-shadow: 0 0 15px rgba(250, 204, 21, 0.7);
+      }
+      .flower {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f97316;
+        position: absolute;
+        transform: translate(-20px, -20px);
+      }
+      .cards-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin-top: 1rem;
+      }
+      .mini-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        background: #111827;
+        opacity: 0;
+        transform: translateY(40px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TextPlugin demo -->
+    <section id="text-demo">
+      <h2>TextPlugin – typing and counters</h2>
+      <div class="type-target"></div>
+      <div style="margin-top: 1.5rem">
+        <span>Users joined:</span>
+        <span class="counter">0</span>
+      </div>
+    </section>
+
+    <!-- MotionPath demo -->
+    <section id="motion-demo">
+      <h2>MotionPathPlugin – follow a path</h2>
+      <p>Imagine this as your bee moving between flowers 🐝</p>
+      <div class="motion-wrapper">
+        <div class="bee"></div>
+        <!-- fake flowers to show points -->
+        <div class="flower" style="top: 50%; left: 10%"></div>
+        <div class="flower" style="top: 20%; left: 40%"></div>
+        <div class="flower" style="top: 70%; left: 60%"></div>
+        <div class="flower" style="top: 30%; left: 85%"></div>
+      </div>
+    </section>
+
+    <!-- gsap.utils demo -->
+    <section id="utils-demo">
+      <h2>gsap.utils – working with multiple elements</h2>
+      <div class="cards-grid">
+        <div class="mini-card">Card 1 – random delay, staggered</div>
+        <div class="mini-card">Card 2 – random delay, staggered</div>
+        <div class="mini-card">Card 3 – random delay, staggered</div>
+        <div class="mini-card">Card 4 – random delay, staggered</div>
+      </div>
+    </section>
+
+    <!-- GSAP + plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger, TextPlugin, MotionPathPlugin);
+
+      // ============= 1) TextPlugin – typing & counters =============
+      // Typing effect
+      gsap.to(".type-target", {
+        duration: 3,
+        text: "Welcome, Bernard. GSAP can animate almost anything 😎",
+        ease: "none",
+      });
+
+      // Animated number counter
+      const counterObj = { value: 0 };
+      gsap.to(counterObj, {
+        value: 1500,
+        duration: 4,
+        delay: 0.5,
+        ease: "power1.out",
+        onUpdate: () => {
+          document.querySelector(".counter").textContent = Math.floor(
+            counterObj.value
+          ).toLocaleString();
+        },
+      });
+
+      // ============= 2) MotionPathPlugin – bee flying path =============
+      gsap.to(".bee", {
+        duration: 8,
+        repeat: -1,
+        ease: "power1.inOut",
+        motionPath: {
+          path: [
+            { x: 50, y: 120 }, // start somewhere middle-left
+            { x: 200, y: 40 }, // go up
+            { x: 350, y: 180 }, // down
+            { x: 550, y: 70 }, // up again
+          ],
+          autoRotate: true,
+          curviness: 2,
+        },
+      });
+
+      // If your container is wider or smaller, you might scale these x/y values.
+
+      // ============= 3) gsap.utils – multiple elements =============
+      const cards = gsap.utils.toArray(".mini-card");
+
+      gsap.from(cards, {
+        scrollTrigger: {
+          trigger: "#utils-demo",
+          start: "top 80%",
+          end: "bottom 60%",
+          toggleActions: "play none none reverse",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: {
+          each: 0.15,
+          from: "start",
+        },
+      });
+
+      // Example using gsap.utils.random() for fun hover effects
+      cards.forEach((card) => {
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: gsap.utils.random(-10, -25),
+            scale: gsap.utils.random(1.02, 1.08),
+            duration: 0.25,
+            ease: "power2.out",
+          });
+        });
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            scale: 1,
+            duration: 0.25,
+            ease: "power2.inOut",
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
